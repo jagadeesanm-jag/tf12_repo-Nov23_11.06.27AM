@@ -1,0 +1,26 @@
+{
+    "meta": {
+        "matchedPoliciesSummary": {
+            "high": 0,
+            "medium": 1,
+            "low": 0
+        },
+        "errorDetails": []
+    },
+    "data": [
+        {
+            "id": "7446ad28-8502-4d71-b334-18cef8d85a2b",
+            "attributes": {
+                "severity": "medium",
+                "name": "AWS Redshift does not have require_ssl configured",
+                "rule": "$.resource.aws_redshift_parameter_group exists and ($.resource.aws_redshift_parameter_group[*].parameter[?(@.name=='require_ssl')] !exists  or $.resource.aws_redshift_parameter_group[*].parameter[?(@.name=='require_ssl' && @.value=='false' )] exists)",
+                "desc": "This policy identifies Redshift databases in which data connection to and from is occurring on an insecure channel. SSL connections ensures the security of the data in transit.",
+                "files": [
+                    "attached"
+                ],
+                "policyId": "7446ad28-8502-4d71-b334-18cef8d85a2b",
+                "docUrl": "http://prisma.fyi/p98"
+            }
+        }
+    ]
+}

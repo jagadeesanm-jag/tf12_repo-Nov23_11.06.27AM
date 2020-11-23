@@ -1,0 +1,432 @@
+{
+    "meta": {
+        "matchedPoliciesSummary": {
+            "high": 10,
+            "medium": 18,
+            "low": 2
+        },
+        "errorDetails": []
+    },
+    "data": [
+        {
+            "id": "630d3779-d932-4fbf-9cce-6e8d793c6916",
+            "attributes": {
+                "severity": "high",
+                "name": "AWS S3 buckets are accessible to public",
+                "rule": "$.resource.aws_s3_bucket exists and ($.resource.aws_s3_bucket[*].acl anyEqual public-read-write or $.resource.aws_s3_bucket[*].acl anyEqual public-read)",
+                "desc": "This policy identifies S3 buckets which are publicly accessible. Amazon S3 allows customers to store or retrieve any type of content from anywhere in the web. Often, customers have legitimate reasons to expose the S3 bucket to public, for example, to host website content. However, these buckets often contain highly sensitive enterprise data which if left open to public may result in sensitive data leaks.",
+                "files": [
+                    "attached"
+                ],
+                "policyId": "630d3779-d932-4fbf-9cce-6e8d793c6916",
+                "docUrl": "http://prisma.fyi/p71"
+            }
+        },
+        {
+            "id": "566686e8-0581-4df5-ae22-5a901ed37b58",
+            "attributes": {
+                "severity": "high",
+                "name": "AWS Security Groups with Inbound rule overly permissive to All Traffic",
+                "rule": "($.resource.aws_security_group exists and ($.resource.aws_security_group[*].ingress[?(@.protocol == 'tcp')].cidr_blocks[*] contains 0.0.0.0/0 or $.resource.aws_security_group[*].ingress[?(@.protocol == 'tcp')].ipv6_cidr_blocks[*] contains ::/0)) or ($.resource.aws_security_group_rule exists and ($.resource.aws_security_group_rule.*[?( @.type == 'ingress' && @.protocol == 'tcp')].cidr_blocks[*] contains 0.0.0.0/0 or $.resource.aws_security_group_rule.*[?( @.type == 'ingress' && @.protocol == 'tcp')].ipv6_cidr_blocks[*] contains ::/0))",
+                "desc": "This policy identifies AWS Security Groups which do allow inbound traffic on all protocols from public internet. Doing so, may allow a bad actor to brute force their way into the system and potentially get access to the entire network.",
+                "files": [
+                    "attached"
+                ],
+                "policyId": "566686e8-0581-4df5-ae22-5a901ed37b58",
+                "docUrl": "http://prisma.fyi/p80"
+            }
+        },
+        {
+            "id": "617b9138-584b-4e8e-ad15-7fbabafbed1a",
+            "attributes": {
+                "severity": "high",
+                "name": "AWS Security Groups allow internet traffic to SSH port (22)",
+                "rule": "$.resource.aws_security_group exists and ($.resource.aws_security_group[*].ingress[?( @.protocol == 'tcp' && @.from_port<23 && @.to_port>21 )].cidr_blocks[*] contains 0.0.0.0/0 or $.resource.aws_security_group[*].ingress[?( @.protocol == 'tcp' && @.from_port<23 && @.to_port>21 )].ipv6_cidr_blocks[*] contains ::/0)",
+                "desc": "This policy identifies AWS Security Groups which do allow inbound traffic on SSH port (22) from public internet. Doing so, may allow a bad actor to brute force their way into the system and potentially get access to the entire network.",
+                "files": [
+                    "attached"
+                ],
+                "policyId": "617b9138-584b-4e8e-ad15-7fbabafbed1a",
+                "docUrl": "http://prisma.fyi/p12"
+            }
+        },
+        {
+            "id": "0ad8c26b-f3b5-4917-b9a4-057f6c2ddebc",
+            "attributes": {
+                "severity": "high",
+                "name": "AWS ECS/ Fargate task definition root user found",
+                "rule": "$.resource.aws_ecs_task_definition[*].container_definitions[?(@.user=='root')] exists",
+                "desc": "The user name to use inside the container should not be root. This policy generates an alert if root user is found in your container definition.\n\nThe User parameter maps to User in the Create a container section of the Docker Remote API and the --user option to docker run\n\nNote: This parameter is not supported for Windows containers.",
+                "files": [
+                    "attached"
+                ],
+                "policyId": "0ad8c26b-f3b5-4917-b9a4-057f6c2ddebc",
+                "docUrl": "http://prisma.fyi/p49"
+            }
+        },
+        {
+            "id": "e9c55485-e508-4783-abdd-d06c61c32431",
+            "attributes": {
+                "severity": "high",
+                "name": "AWS ECS task definition resource limits not set",
+                "rule": "$.resource.aws_ecs_task_definition exists and ($.resource.aws_ecs_task_definition[*].cpu any equal 0 or $.resource.aws_ecs_task_definition[*].cpu !exists or $.resource.aws_ecs_task_definition[*].memory !exists or $.resource.aws_ecs_task_definition[*].memory any equal 0)",
+                "desc": "Check if AWS ECS task definition resource limits are set.",
+                "files": [
+                    "attached"
+                ],
+                "policyId": "e9c55485-e508-4783-abdd-d06c61c32431",
+                "docUrl": "http://prisma.fyi/p6"
+            }
+        },
+        {
+            "id": "b76ad441-e715-4fd0-bbc3-cd3b2bee34bf",
+            "attributes": {
+                "severity": "high",
+                "name": "AWS CloudTrail bucket is publicly accessible",
+                "rule": "$.resource.aws_cloudtrail exists and $.resource.aws_cloudtrail[*].s3_bucket_name equals $.resource.aws_s3_bucket_public_access_block[*].bucket and  ($.resource.aws_s3_bucket_public_access_block[*].block_public_acls isFalse or  $.resource.aws_s3_bucket_public_access_block[*].block_public_policy isFalse)",
+                "desc": "This policy identifies publicly accessible S3 buckets that store CloudTrail data. These buckets contains sensitive audit data and only authorized users and applications should have access.",
+                "files": [
+                    "attached"
+                ],
+                "policyId": "b76ad441-e715-4fd0-bbc3-cd3b2bee34bf",
+                "docUrl": "http://prisma.fyi/p15"
+            }
+        },
+        {
+            "id": "a707de6a-11b7-478a-b636-5e21ee1f6162",
+            "attributes": {
+                "severity": "high",
+                "name": "AWS RDS snapshots are accessible to public",
+                "rule": "$.resource.aws_db_instance exists and ($.resource.aws_db_instance[*].publicly_accessible !exists  or $.resource.aws_db_instance[*].publicly_accessible anyTrue)",
+                "desc": "This policy identifies AWS RDS snapshots which are accessible to public. Amazon Relational Database Service (Amazon RDS) is a web service that makes it easier to setup and manage databases. If RDS snapshots are inadvertently shared to public, any unauthorized user with AWS console access can gain access to the snapshots and gain access to sensitive data.",
+                "files": [
+                    "attached"
+                ],
+                "policyId": "a707de6a-11b7-478a-b636-5e21ee1f6162",
+                "docUrl": "http://prisma.fyi/p22"
+            }
+        },
+        {
+            "id": "2378dbf4-b104-4bda-9b05-7417affbba3f",
+            "attributes": {
+                "severity": "high",
+                "name": "AWS Default Security Group does not restrict all traffic",
+                "rule": "$.resource.aws_default_security_group exists and ($.resource.aws_default_security_group[*].ingress[*].cidr_blocks[*] contains 0.0.0.0/0 or $.resource.aws_default_security_group[*].ingress[*].ipv6_cidr_blocks[*] contains ::/0 or $.resource.aws_default_security_group[*].egress[*].cidr_blocks[*] contains 0.0.0.0/0 or $.resource.aws_default_security_group[*].egress[*].ipv6_cidr_blocks[*] contains ::/0)",
+                "desc": "This policy identifies the default security group which does not restrict all inbound and outbound traffic. A VPC comes with a default security group whose initial configuration deny all inbound traffic from internet and allow all outbound traffic. If you do not specify a security group when you launch an instance, the instance is automatically assigned to this default security group. As a result, the instance may accidentally send outbound traffic.",
+                "files": [
+                    "attached"
+                ],
+                "policyId": "2378dbf4-b104-4bda-9b05-7417affbba3f",
+                "docUrl": "http://prisma.fyi/p58"
+            }
+        },
+        {
+            "id": "b82f90ce-ed8b-4b49-970c-2268b0a6c2e5",
+            "attributes": {
+                "severity": "high",
+                "name": "AWS Security Groups allow internet traffic from internet to RDP port (3389)",
+                "rule": "$.resource.aws_security_group exists and ($.resource.aws_security_group[*].ingress[?( @.protocol == 'tcp' && @.from_port<3390 && @.to_port>3388 )].cidr_blocks[*] contains 0.0.0.0/0 or $.resource.aws_security_group[*].ingress[?( @.protocol == 'tcp' && @.from_port<3390 && @.to_port>3388)].ipv6_cidr_blocks[*] contains ::/0)",
+                "desc": "This policy identifies the security groups which is exposing RDP port (3389) to the internet. Security Groups do not allow inbound traffic on RDP port (3389) from public internet. Doing so, may allow a bad actor to brute force their way into the system and potentially get access to the entire network.",
+                "files": [
+                    "attached"
+                ],
+                "policyId": "b82f90ce-ed8b-4b49-970c-2268b0a6c2e5",
+                "docUrl": "http://prisma.fyi/p18"
+            }
+        },
+        {
+            "id": "704cf655-e437-4741-a358-789c0af8474e",
+            "attributes": {
+                "severity": "high",
+                "name": "AWS EKS unsupported Master node version",
+                "rule": "$.resource.aws_eks_cluster[*].version anyStartWith 1.9.",
+                "desc": "Ensure your EKS Master node version is supported. This policy checks your EKS master node version and generates an alert if the version running is unsupported.",
+                "files": [
+                    "attached"
+                ],
+                "policyId": "704cf655-e437-4741-a358-789c0af8474e",
+                "docUrl": "http://prisma.fyi/p56"
+            }
+        },
+        {
+            "id": "9a5813af-17a3-4058-be13-588ea00b4bfa",
+            "attributes": {
+                "severity": "medium",
+                "name": "AWS IAM password policy does not have a number",
+                "rule": "$.resource.aws_iam_account_password_policy exists and $.resource.aws_iam_account_password_policy[*].require_numbers anyFalse",
+                "desc": "Checks to ensure that IAM password policy requires a number. AWS IAM (Identity & Access Management) allows customers to secure AWS console access. As a security best practice, customers must have strong password policies in place.",
+                "files": [
+                    "attached"
+                ],
+                "policyId": "9a5813af-17a3-4058-be13-588ea00b4bfa",
+                "docUrl": "http://prisma.fyi/p45"
+            }
+        },
+        {
+            "id": "497f7e2c-b702-47c7-9a07-f0f6404ac896",
+            "attributes": {
+                "severity": "medium",
+                "name": "AWS Customer Master Key (CMK) rotation is not enabled",
+                "rule": "$.resource.aws_kms_key exists and ( $.resource.aws_kms_key[*].enable_key_rotation anyFalse or  $.resource.aws_kms_key[*].enable_key_rotation anyNull)",
+                "desc": "Checks to ensure that CMKs are rotated periodically. AWS KMS (Key Management Service) allows customers to create master keys to encrypt sensitive data in different services. As a security best practice, it is important to rotate the keys periodically so that if the keys are compromised, the data in the underlying service is still secure with the new keys",
+                "files": [
+                    "attached"
+                ],
+                "policyId": "497f7e2c-b702-47c7-9a07-f0f6404ac896",
+                "docUrl": "http://prisma.fyi/p54"
+            }
+        },
+        {
+            "id": "a2107824-6ed5-4c67-9450-8b154bb1fd2b",
+            "attributes": {
+                "severity": "medium",
+                "name": "AWS IAM password policy allows password reuse",
+                "rule": "$.resource.aws_iam_account_password_policy[*].password_reuse_prevention == 0",
+                "desc": "This policy identifies IAM policies which allow password reuse . AWS IAM (Identity & Access Management) allows customers to secure AWS console access. As a security best practice, customers must have strong password policies in place.",
+                "files": [
+                    "attached"
+                ],
+                "policyId": "a2107824-6ed5-4c67-9450-8b154bb1fd2b",
+                "docUrl": "http://prisma.fyi/p108"
+            }
+        },
+        {
+            "id": "c2b84f89-7ec8-473e-a6af-404feeeb96c5",
+            "attributes": {
+                "severity": "medium",
+                "name": "AWS CloudTrail logs are not encrypted using Customer Master Keys (CMKs)",
+                "rule": "$.resource.aws_cloudtrail exists and ($.resource.aws_cloudtrail[*].kms_key_id anyNull or $.resource.aws_cloudtrail[*].kms_key_id anyEmpty)",
+                "desc": "Checks to ensure that CloudTrail logs are encrypted. AWS CloudTrail is a service that enables governance, compliance, operational & risk auditing of the AWS account. It is a compliance and security best practice to encrypt the CloudTrail data since it may contain sensitive information. ",
+                "files": [
+                    "attached"
+                ],
+                "policyId": "c2b84f89-7ec8-473e-a6af-404feeeb96c5",
+                "docUrl": "http://prisma.fyi/p66"
+            }
+        },
+        {
+            "id": "98723199-7cc5-4dee-b667-4eec7fb55460",
+            "attributes": {
+                "severity": "medium",
+                "name": "AWS VPC NACL allows traffic from blocked ports",
+                "rule": "$.resource.aws_network_acl exists and $.resource.aws_network_acl[*].ingress[?(@.protocol == 'tcp' && @.from_port == '22' && @.to_port == '22')].action==allow or $.resource.aws_network_acl[*].ingress[?(@.protocol == 'tcp' && @.from_port == '21' && @.to_port == '21')].action==allow or $.resource.aws_network_acl[*].ingress[?(@.protocol == 'tcp' && @.from_port == '5800' && @.to_port == '5800')].action==allow or $.resource.aws_network_acl[*].ingress[?(@.protocol == 'tcp' && @.from_port == '5900' && @.to_port == '5903')].action==allow or  $.resource.aws_network_acl[*].ingress[?(@.protocol == 'tcp' && @.from_port == '2323' && @.to_port == '2323')].action==allow or $.resource.aws_network_acl[*].ingress[?(@.protocol == 'tcp' && @.from_port == '23' && @.to_port == '23')].action==allow or $.resource.aws_network_acl[*].ingress[?(@.protocol == 'tcp' && @.from_port == '25' && @.to_port == '25')].action==allow or $.resource.aws_network_acl[*].ingress[?(@.protocol == 'tcp' && @.from_port == '110' && @.to_port == '110')].action==allow or $.resource.aws_network_acl[*].ingress[?(@.protocol == 'tcp' && @.from_port == '143' && @.to_port == '143')].action==allow or $.resource.aws_network_acl[*].ingress[?(@.protocol == '-1' && @.from_port == '53' && @.to_port == '53')].action==allow or $.resource.aws_network_acl[*].ingress[?(@.protocol == 'udp' && @.from_port == '135' && @.to_port == '135')].action==allow or $.resource.aws_network_acl[*].ingress[?(@.protocol == '-1' && @.from_port == '137' && @.to_port == '139')].action==allow or $.resource.aws_network_acl[*].ingress[?(@.protocol == 'udp' && @.from_port == '69' && @.to_port == '69')].action==allow",
+                "desc": "Ensure AWS VPC NACL blocks traffic from blocked ports.",
+                "files": [
+                    "attached"
+                ],
+                "policyId": "98723199-7cc5-4dee-b667-4eec7fb55460",
+                "docUrl": "http://prisma.fyi/p42"
+            }
+        },
+        {
+            "id": "2e5e5b6e-584c-43e7-a8e1-2b66abb74da9",
+            "attributes": {
+                "severity": "medium",
+                "name": "AWS VPC allows unauthorized peering",
+                "rule": "$.resource.aws_vpc_peering_connection exists and $.resource.aws_vpc_peering_connection[*].peer_owner_id exists",
+                "desc": "This policy identifies the VPCs which have unauthorized peering. The recommended best practice is to disallow VPC peering between two VPCs from different AWS accounts, as this potentially enables unauthorized access to private resources.",
+                "files": [
+                    "attached"
+                ],
+                "policyId": "2e5e5b6e-584c-43e7-a8e1-2b66abb74da9",
+                "docUrl": "http://prisma.fyi/p85"
+            }
+        },
+        {
+            "id": "f53107a2-00b2-46fb-98a9-1f12262c7d44",
+            "attributes": {
+                "severity": "medium",
+                "name": "AWS IAM password policy does not expire in 90 days",
+                "rule": "$.resource.aws_iam_account_password_policy exists and $.resource.aws_iam_account_password_policy.*[?( @.max_password_age>90 )] is not empty",
+                "desc": "This policy identifies the IAM policies which does not have password expiration set to 90 days. AWS IAM (Identity & Access Management) allows customers to secure AWS console access. As a security best practice, customers must have strong password policies in place.",
+                "files": [
+                    "attached"
+                ],
+                "policyId": "f53107a2-00b2-46fb-98a9-1f12262c7d44",
+                "docUrl": "http://prisma.fyi/p67"
+            }
+        },
+        {
+            "id": "fd4dae57-509e-4374-96d3-e136821fc3f3",
+            "attributes": {
+                "severity": "medium",
+                "name": "AWS IAM password policy does not have a symbol",
+                "rule": "$.resource.aws_iam_account_password_policy exists and $.resource.aws_iam_account_password_policy[*].require_symbols anyFalse",
+                "desc": "Checks to ensure that IAM password policy requires a symbol. AWS IAM (Identity & Access Management) allows customers to secure AWS console access. As a security best practice, customers must have strong password policies in place.",
+                "files": [
+                    "attached"
+                ],
+                "policyId": "fd4dae57-509e-4374-96d3-e136821fc3f3",
+                "docUrl": "http://prisma.fyi/p9"
+            }
+        },
+        {
+            "id": "f3542ecc-6d34-4797-9b0f-d773d46b50a7",
+            "attributes": {
+                "severity": "medium",
+                "name": "AWS VPC NACL allows egress traffic from blocked ports",
+                "rule": "$.resource.aws_network_acl exists and $.resource.aws_network_acl[*].egress[?(@.protocol == 'tcp' && @.from_port == '22' && @.to_port == '22')].action==allow or $.resource.aws_network_acl[*].egress[?(@.protocol == 'tcp' && @.from_port == '21' && @.to_port == '21')].action==allow or $.resource.aws_network_acl[*].egress[?(@.protocol == 'udp' && @.from_port == '135' && @.to_port == '135')].action==allow or $.resource.aws_network_acl[*].egress[?(@.protocol == 'tcp' && @.from_port == '445' && @.to_port == '445')].action==allow or $.resource.aws_network_acl[*].egress[?(@.protocol == '-1' && @.from_port == '137' && @.to_port == '139')].action==allow or $.resource.aws_network_acl[*].egress[?(@.protocol == 'udp' && @.from_port == '69' && @.to_port == '69')].action==allow",
+                "desc": "Ensure AWS VPC NACL blocks egress traffic from blocked ports.",
+                "files": [
+                    "attached"
+                ],
+                "policyId": "f3542ecc-6d34-4797-9b0f-d773d46b50a7",
+                "docUrl": "http://prisma.fyi/p75"
+            }
+        },
+        {
+            "id": "2f33ac46-c909-4dca-8c0d-34fa2633865a",
+            "attributes": {
+                "severity": "medium",
+                "name": "AWS RDS event subscription disabled for DB security groups",
+                "rule": "$.resource.aws_db_instance exists and ( $.resource.aws_db_event_subscription !exists or $.resource.aws_db_event_subscription.*[?(@.source_type=='db-security-group')] anyNull  or not $.resource.aws_db_event_subscription.*[?(@.source_type=='db-security-group')].enabled anyNull or $.resource.aws_db_event_subscription.*[?(@.source_type=='db-security-group')].enabled anyTrue )",
+                "desc": "This policy identifies RDS event subscriptions for which DB security groups event subscription is disabled. You can create an Amazon RDS event notification subscription so that you can be notified when an event occurs for given DB security groups.",
+                "files": [
+                    "attached"
+                ],
+                "policyId": "2f33ac46-c909-4dca-8c0d-34fa2633865a",
+                "docUrl": "http://prisma.fyi/p87"
+            }
+        },
+        {
+            "id": "fc2c5836-3206-4ea8-8bc9-3ba34a00aac8",
+            "attributes": {
+                "severity": "medium",
+                "name": "AWS ElasticSearch cluster not in a VPC",
+                "rule": "$.resource.aws_elasticsearch_domain exists and ($.resource.aws_elasticsearch_domain[*].vpc_options does not exist or $.resource.aws_elasticsearch_domain[*].vpc_options.subnet_ids !exists)",
+                "desc": "VPC support for Amazon ES is easy to configure, reliable, and offers an extra layer of security. With VPC support, traffic between other services and Amazon ES stays entirely within the AWS network, isolated from the public Internet. You can manage network access using existing VPC security groups, and you can use AWS Identity and Access Management (IAM) policies for additional protection. VPC support for Amazon ES domains is available at no additional charge.",
+                "files": [
+                    "attached"
+                ],
+                "policyId": "fc2c5836-3206-4ea8-8bc9-3ba34a00aac8",
+                "docUrl": "http://prisma.fyi/p102"
+            }
+        },
+        {
+            "id": "89ea62c1-3845-4134-b337-cc82203b8ff9",
+            "attributes": {
+                "severity": "medium",
+                "name": "AWS S3 Object Versioning is disabled",
+                "rule": " $.resource.aws_s3_bucket exists and ($.resource.aws_s3_bucket[*].versioning.enabled does not exist or $.resource.aws_s3_bucket[*].versioning.enabled anyFalse)",
+                "desc": "This policy identifies the S3 buckets which have Object Versioning disabled. S3 Object Versioning is an important capability in protecting your data within a bucket. Once you enable Object Versioning, you cannot remove it; you can suspend Object Versioning at any time on a bucket if you do not wish for it to persist. It is recommended to enable Object Versioning on S3.",
+                "files": [
+                    "attached"
+                ],
+                "policyId": "89ea62c1-3845-4134-b337-cc82203b8ff9",
+                "docUrl": "http://prisma.fyi/p69"
+            }
+        },
+        {
+            "id": "31626ca9-f659-4d25-9d88-fa32262bbba7",
+            "attributes": {
+                "severity": "medium",
+                "name": "AWS IAM password policy does not have an uppercase character",
+                "rule": "$.resource.aws_iam_account_password_policy exists and $.resource.aws_iam_account_password_policy[*].require_uppercase_characters anyFalse",
+                "desc": "This policy identifies AWS accounts in which IAM password policy does not have an uppercase character. AWS IAM (Identity & Access Management) allows customers to secure AWS console access. As a security best practice, customers must have strong password policies in place.",
+                "files": [
+                    "attached"
+                ],
+                "policyId": "31626ca9-f659-4d25-9d88-fa32262bbba7",
+                "docUrl": "http://prisma.fyi/p103"
+            }
+        },
+        {
+            "id": "ef7c537b-72eb-42a7-bab7-cb2d22c76a0d",
+            "attributes": {
+                "severity": "medium",
+                "name": "AWS IAM password policy does not have a lowercase character",
+                "rule": "$.resource.aws_iam_account_password_policy exists and $.resource.aws_iam_account_password_policy[*].require_lowercase_characters anyFalse",
+                "desc": "Checks to ensure that IAM password policy requires a lowercase character. AWS IAM (Identity & Access Management) allows customers to secure AWS console access. As a security best practice, customers must have strong password policies in place.",
+                "files": [
+                    "attached"
+                ],
+                "policyId": "ef7c537b-72eb-42a7-bab7-cb2d22c76a0d",
+                "docUrl": "http://prisma.fyi/p20"
+            }
+        },
+        {
+            "id": "ff10f3be-1dd6-4102-9816-9c6fdda231b0",
+            "attributes": {
+                "severity": "medium",
+                "name": "AWS security group allows egress traffic to blocked ports - 21,22,135,137-139,445,69",
+                "rule": "$.resource.aws_security_group exists and $.resource.aws_security_group[*].egress[?(@.protocol == 'tcp' && @.from_port == '22' && @.to_port == '22')].cidr_blocks[*] == 0.0.0.0/0 or $.resource.aws_security_group[*].egress[?(@.protocol == 'tcp' && @.from_port == '22' && @.to_port == '22')].ipv6_cidr_blocks[*] == ::/0 or $.resource.aws_security_group[*].egress[?(@.protocol == 'tcp' && @.from_port == '21' && @.to_port == '21')].cidr_blocks[*] == 0.0.0.0/0 or $.resource.aws_security_group[*].egress[?(@.protocol == 'tcp' && @.from_port == '21' && @.to_port == '21')].ipv6_cidr_blocks[*] == ::/0 or $.resource.aws_security_group[*].egress[?(@.protocol == 'tcp' && @.from_port == '445' && @.to_port == '445')].cidr_blocks[*] == 0.0.0.0/0 or $.resource.aws_security_group[*].egress[?(@.protocol == 'tcp' && @.from_port == '445' && @.to_port == '445')].ipv6_cidr_blocks[*] == ::/0 or $.resource.aws_security_group[*].egress[?(@.protocol == 'udp' && @.from_port == '135' && @.to_port == '135')].cidr_blocks[*] == 0.0.0.0/0 or $.resource.aws_security_group[*].egress[?(@.protocol == 'udp' && @.from_port == '135' && @.to_port == '135')].ipv6_cidr_blocks[*] == ::/0 or $.resource.aws_security_group[*].egress[?(@.protocol == '-1' && @.from_port == '137' && @.to_port == '139')].cidr_blocks[*] == 0.0.0.0/0 or $.resource.aws_security_group[*].egress[?(@.protocol == '-1' && @.from_port == '137' && @.to_port == '139')].ipv6_cidr_blocks[*] == ::/0 or $.resource.aws_security_group[*].egress[?(@.protocol == 'udp' && @.from_port == '69' && @.to_port == '69')].cidr_blocks[*] == 0.0.0.0/0 or $.resource.aws_security_group[*].egress[?(@.protocol == 'udp' && @.from_port == '69' && @.to_port == '69')].ipv6_cidr_blocks[*] == ::/0 ",
+                "desc": "Ensure AWS security groups block egress traffic to blocked ports - 21,22,135,137-139,445,69.",
+                "files": [
+                    "attached"
+                ],
+                "policyId": "ff10f3be-1dd6-4102-9816-9c6fdda231b0",
+                "docUrl": "http://prisma.fyi/p72"
+            }
+        },
+        {
+            "id": "168bfaa0-8c1d-427e-bfa8-4d96d82e3d83",
+            "attributes": {
+                "severity": "medium",
+                "name": "AWS IAM password policy does not have a minimum of 14 characters",
+                "rule": "$.resource.aws_iam_account_password_policy exists and $.resource.aws_iam_account_password_policy.*[?( @.minimum_password_length<14 )] is not empty",
+                "desc": "Checks to ensure that IAM password policy requires minimum of 14 characters. AWS IAM (Identity & Access Management) allows customers to secure AWS console access. As a security best practice, customers must have strong password policies in place.",
+                "files": [
+                    "attached"
+                ],
+                "policyId": "168bfaa0-8c1d-427e-bfa8-4d96d82e3d83",
+                "docUrl": "http://prisma.fyi/p62"
+            }
+        },
+        {
+            "id": "b17e95d3-901c-4aec-aefd-bcd52b10089d",
+            "attributes": {
+                "severity": "medium",
+                "name": "AWS ECS/ Fargate task definition execution IAM Role not found",
+                "rule": " $.resource.aws_ecs_task_definition exists and ($.resource.aws_ecs_task_definition[*].execution_role_arn anyNull or $.resource.aws_ecs_task_definition[*].execution_role_arn anyEmpty)",
+                "desc": "The execution IAM Role is required by tasks to pull container images and publish container logs to Amazon CloudWatch on your behalf. This policy generates an alert if a task execution role is not found in your task definition.",
+                "files": [
+                    "attached"
+                ],
+                "policyId": "b17e95d3-901c-4aec-aefd-bcd52b10089d",
+                "docUrl": "http://prisma.fyi/p38"
+            }
+        },
+        {
+            "id": "7446ad28-8502-4d71-b334-18cef8d85a2b",
+            "attributes": {
+                "severity": "medium",
+                "name": "AWS Redshift does not have require_ssl configured",
+                "rule": "$.resource.aws_redshift_parameter_group exists and ($.resource.aws_redshift_parameter_group[*].parameter[?(@.name=='require_ssl')] !exists  or $.resource.aws_redshift_parameter_group[*].parameter[?(@.name=='require_ssl' && @.value=='false' )] exists)",
+                "desc": "This policy identifies Redshift databases in which data connection to and from is occurring on an insecure channel. SSL connections ensures the security of the data in transit.",
+                "files": [
+                    "attached"
+                ],
+                "policyId": "7446ad28-8502-4d71-b334-18cef8d85a2b",
+                "docUrl": "http://prisma.fyi/p98"
+            }
+        },
+        {
+            "id": "2b7e07ba-56c8-42db-8db4-a4b65f5066c4",
+            "attributes": {
+                "severity": "low",
+                "name": "AWS IAM policy attached to users",
+                "rule": "$.resource.aws_iam_policy_attachment[*].users exists and $.resource.aws_iam_policy_attachment[*].users[*] is not empty",
+                "desc": "This policy identifies IAM policies attached to user. By default, IAM users, groups, and roles have no access to AWS resources. IAM policies are the means by which privileges are granted to users, groups, or roles. It is recommended that IAM policies be applied directly to groups but not users.",
+                "files": [
+                    "attached"
+                ],
+                "policyId": "2b7e07ba-56c8-42db-8db4-a4b65f5066c4",
+                "docUrl": "http://prisma.fyi/p78"
+            }
+        },
+        {
+            "id": "3f141560-9cfc-412a-96cc-2768edfd23ad",
+            "attributes": {
+                "severity": "low",
+                "name": "AWS S3 CloudTrail buckets for which access logging is disabled",
+                "rule": "$.resource.aws_cloudtrail exists and $.resource.aws_cloudtrail[*].enable_logging anyFalse",
+                "desc": "This policy identifies S3 CloudTrail buckets for which access is disabled. S3 Bucket access logging generates access records for each request made to your S3 bucket. An access log record contains information such as the request type, the resources specified in the request worked, and the time and date the request was processed. It is recommended that bucket access logging be enabled on the CloudTrail S3 bucket.",
+                "files": [
+                    "attached"
+                ],
+                "policyId": "3f141560-9cfc-412a-96cc-2768edfd23ad",
+                "docUrl": "http://prisma.fyi/p7"
+            }
+        }
+    ]
+}
