@@ -15,3 +15,4 @@ resource "aws_redshift_parameter_group" "bar" {
     value = "false"
   }
 }
+# Modified [aws_all_issues_test.tf] on [2020-11-23 11:06:48.642796]
