@@ -45,3 +45,5 @@ output "from_ports" {
   value = aws_security_group.vault.ingress[*].from_port
   #value = aws_security_group.vault.ingress.*.from_port
 }
+
+# Modified [main.tf] on [2020-11-23 11:07:37.817770]
